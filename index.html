@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sancharam | Digital Odyssey</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+Tamil:wght@300&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --accent: #ff9800;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', 'Noto Sans Tamil', sans-serif;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            color: var(--white);
+        }
+
+        /* Slideshow */
+        .viewport {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transform: scale(1.2);
+            filter: brightness(0.4) saturate(1.2);
+            transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* HUD Interface */
+        .interface {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 80px 1fr 80px;
+            grid-template-rows: 80px 1fr 80px;
+        }
+
+        .top-nav {
+            grid-column: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-weight: 700;
+            letter-spacing: 5px;
+            font-size: 1.2rem;
+            color: var(--accent);
+        }
+
+        .main-hero {
+            grid-column: 2;
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 25px;
+            background: linear-gradient(to bottom, #fff 50%, rgba(255,255,255,0.2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            min-height: 1.2em; /* Prevents layout jump */
+        }
+
+        .desc-box {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 15px 35px;
+            border-radius: 50px;
+            max-width: 550px;
+            margin-bottom: 40px;
+        }
+
+        .explore-btn {
+            padding: 18px 50px;
+            color: var(--white);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+            border: 1px solid var(--accent);
+            transition: 0.4s;
+            position: relative;
+        }
+
+        .explore-btn:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 30px rgba(255, 152, 0, 0.4);
+        }
+
+        .vertical-indicator {
+            grid-column: 3;
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .num-mark {
+            font-size: 0.7rem;
+            opacity: 0.3;
+            transition: 0.4s;
+            cursor: pointer;
+        }
+
+        .num-mark.active {
+            opacity: 1;
+            color: var(--accent);
+            transform: scale(1.4);
+        }
+
+        .footer-status {
+            grid-column: 2;
+            grid-row: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin-right: 12px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.6); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .interface { grid-template-columns: 20px 1fr 20px; }
+            .vertical-indicator { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="viewport">
+        <img src="assets/images/chettinad.jpg" class="slide active">
+        <img src="assets/images/ooty.jpg" class="slide">
+        <img src="assets/images/tranquebar_fort.jpg" class="slide">
+        <img src="assets/images/hogenakkal.jpg" class="slide">
+        <img src="assets/images/velankanni.jpg" class="slide">
+    </div>
+
+    <div class="interface">
+        <header class="top-nav">
+            <div class="logo">SANCHARAM</div>
+            <div class="coord">V 3.0 // 2026</div>
+        </header>
+
+        <main class="main-hero">
+            <h1 id="typing-text"></h1>
+            <div class="desc-box">
+                <p>An intuitive travel ecosystem designed for the modern voyager.</p>
+            </div>
+            <a href="features.html" class="explore-btn">Initiate Discovery</a>
+        </main>
+
+        <aside class="vertical-indicator" id="nav-dots"></aside>
+
+        <footer class="footer-status">
+            <div class="status-dot"></div>
+            System Active // Exploration Protocol Ready
+        </footer>
+    </div>
+
+<script>
+    const slides = document.querySelectorAll('.slide');
+    const textArray = ["SANCHARAM", "சஞ்சாரம்"];
+    const typingElement = document.getElementById('typing-text');
+    const navDots = document.getElementById('nav-dots');
+    
+    let slideIdx = 0;
+    let textIdx = 0;
+    let charIdx = 0;
+    let isDeleting = false;
+
+    // 1. Generate Indicators
+    slides.forEach((_, i) => {
+        const span = document.createElement('span');
+        span.classList.add('num-mark');
+        if(i === 0) span.classList.add('active');
+        span.innerText = `0${i+1}`;
+        navDots.appendChild(span);
+    });
+
+    // 2. Typing Effect Logic
+    function typeEffect() {
+        const currentText = textArray[textIdx];
+        
+        if (isDeleting) {
+            typingElement.innerText = currentText.substring(0, charIdx - 1);
+            charIdx--;
+        } else {
+            typingElement.innerText = currentText.substring(0, charIdx + 1);
+            charIdx++;
+        }
+
+        let speed = isDeleting ? 70 : 150;
+
+        if (!isDeleting && charIdx === currentText.length) {
+            speed = 3000; // Hold full text
+            isDeleting = true;
+        } else if (isDeleting && charIdx === 0) {
+            isDeleting = false;
+            textIdx = (textIdx + 1) % textArray.length;
+            speed = 500;
+        }
+
+        setTimeout(typeEffect, speed);
+    }
+
+    // 3. Slideshow Logic
+    function nextSlide() {
+        slides[slideIdx].classList.remove('active');
+        const dots = document.querySelectorAll('.num-mark');
+        if(dots[slideIdx]) dots[slideIdx].classList.remove('active');
+        
+        slideIdx = (slideIdx + 1) % slides.length;
+        
+        slides[slideIdx].classList.add('active');
+        if(dots[slideIdx]) dots[slideIdx].classList.add('active');
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        typeEffect();
+        setInterval(nextSlide, 7000);
+    });
+</script>
+
+</body>
+</html>

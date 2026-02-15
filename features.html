@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sancharam | Interactive Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@300;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg: #050505;
+      --text: #ffffff;
+      --accent: #ff3d57;
+      --transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Background Layers */
+    .bg-layers {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .bg-img {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transform: scale(1.1);
+      transition: opacity 0.8s ease, transform 1.2s ease;
+      filter: brightness(0.25) contrast(1.1);
+    }
+
+    .bg-img.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Top Progress Bar */
+    .loader-bar {
+      position: fixed;
+      top: 0; left: 0; width: 0%; height: 3px;
+      background: var(--accent);
+      z-index: 100;
+      transition: width 0.4s ease;
+    }
+
+    header {
+      padding: 40px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      mix-blend-mode: difference;
+    }
+
+    .logo {
+      font-family: 'Syncopate', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 4px;
+    }
+
+    /* Shutter Layout */
+    .shutter-container {
+      display: flex;
+      flex: 1;
+      width: 100%;
+      z-index: 5;
+    }
+
+    .shutter {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 60px 40px;
+      text-decoration: none;
+      color: white;
+      transition: var(--transition);
+      border-right: 1px solid rgba(255,255,255,0.05);
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    .shutter:hover {
+      flex: 3;
+      background: rgba(0,0,0,0.1);
+      backdrop-filter: blur(0px);
+    }
+
+    .shutter-header {
+      transform: rotate(-90deg);
+      transform-origin: left bottom;
+      position: absolute;
+      bottom: 60px;
+      left: 75px;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+
+    .shutter:hover .shutter-header {
+      transform: rotate(0);
+      position: relative;
+      bottom: 0;
+      left: 0;
+      margin-bottom: 20px;
+    }
+
+    .shutter-header h2 {
+      font-family: 'Syncopate', sans-serif;
+      font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    .shutter-desc {
+      max-width: 380px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: var(--transition);
+      color: rgba(255,255,255,0.6);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .shutter:hover .shutter-desc {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.1s;
+    }
+
+    .shutter-icon {
+      position: absolute;
+      top: 60px;
+      left: 40px;
+      font-size: 1.4rem;
+      color: var(--accent);
+      opacity: 0.4;
+      transition: var(--transition);
+    }
+
+    .shutter:hover .shutter-icon {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+
+    /* CTA Button inside Shutter */
+    .shutter-btn {
+        margin-top: 25px;
+        padding: 10px 20px;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        width: fit-content;
+        opacity: 0;
+        transition: 0.3s;
+    }
+
+    .shutter:hover .shutter-btn {
+        opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .shutter-container { flex-direction: column; }
+      .shutter { flex: 1; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .shutter-header { transform: none; position: relative; bottom: 0; left: 0; }
+      .shutter:hover { flex: 5; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loader-bar" id="loader"></div>
+
+  <div class="bg-layers">
+    <div id="bg-default" class="bg-img active" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1500')"></div>
+    <div id="bg-safety" class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1500')"></div>
+    <div id="bg-nav" class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&w=1500')"></div>
+    <div id="bg-blockchain" class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=1500')"></div>
+    <div id="bg-ai" class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1500')"></div>
+    <div id="bg-gems" class="bg-img" style="background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1500')"></div>
+  </div>
+
+  <header>
+    <div class="logo">SANCHARAM</div>
+    <div style="font-size: 0.6rem; letter-spacing: 3px; opacity: 0.6;">SYSTEMS_INITIALIZED_2026</div>
+  </header>
+
+  <main class="shutter-container">
+
+    <a href="features/safety.html" class="shutter" onmouseenter="handleEnter('bg-safety')" onmouseleave="handleLeave()">
+      <i class="fas fa-shield-halved shutter-icon"></i>
+      <div class="shutter-header"><h2>Safety AI</h2></div>
+      <p class="shutter-desc">Autonomous neural-sync security protocols and instant authority integration.</p>
+      <div class="shutter-btn">Launch Module</div>
+    </a>
+
+    <a href="features/routing.html" class="shutter" onmouseenter="handleEnter('bg-nav')" onmouseleave="handleLeave()">
+      <i class="fas fa-route shutter-icon"></i>
+      <div class="shutter-header"><h2>Smart Nav</h2></div>
+      <p class="shutter-desc">Dynamic mapping through verified cultural safety corridors.</p>
+      <div class="shutter-btn">Launch Module</div>
+    </a>
+
+    <a href="features/blockchain.html" class="shutter" onmouseenter="handleEnter('bg-blockchain')" onmouseleave="handleLeave()">
+      <i class="fas fa-link shutter-icon"></i>
+      <div class="shutter-header"><h2>Blockchain</h2></div>
+      <p class="shutter-desc">Decentralized identity ensuring seamless secure verification.</p>
+      <div class="shutter-btn">Launch Module</div>
+    </a>
+
+    <a href="features/itinerary.html" class="shutter" onmouseenter="handleEnter('bg-ai')" onmouseleave="handleLeave()">
+      <i class="fas fa-wand-magic-sparkles shutter-icon"></i>
+      <div class="shutter-header"><h2>Adaptive</h2></div>
+      <p class="shutter-desc">AI itineraries that evolve based on your real-time behavior.</p>
+      <div class="shutter-btn">Launch Module</div>
+    </a>
+
+    <a href="features/hidden-gems.html" class="shutter" onmouseenter="handleEnter('bg-gems')" onmouseleave="handleLeave()">
+      <i class="fas fa-gem shutter-icon"></i>
+      <div class="shutter-header"><h2>Uncharted</h2></div>
+      <p class="shutter-desc">Procedural mapping of hidden festivals and secret local spots.</p>
+      <div class="shutter-btn">Launch Module</div>
+    </a>
+
+  </main>
+
+  <script>
+    const loader = document.getElementById('loader');
+
+    function handleEnter(id) {
+      // Switch Background
+      document.querySelectorAll('.bg-img').forEach(img => img.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      
+      // Progress Bar Animation
+      loader.style.width = '100%';
+    }
+
+    function handleLeave() {
+      document.querySelectorAll('.bg-img').forEach(img => img.classList.remove('active'));
+      document.getElementById('bg-default').classList.add('active');
+      
+      loader.style.width = '0%';
+    }
+  </script>
+
+</body>
+</html>
